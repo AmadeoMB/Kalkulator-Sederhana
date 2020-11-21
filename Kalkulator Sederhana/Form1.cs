@@ -29,10 +29,87 @@ namespace Kalkulator_Sederhana
             return true;
         }
 
+        private Boolean cekAngka(char angka)
+        {
+            if (
+                angka.Equals('0')
+                ||
+                angka.Equals('1')
+                ||
+                angka.Equals('2')
+                ||
+                angka.Equals('3')
+                ||
+                angka.Equals('4')
+                ||
+                angka.Equals('5')
+                ||
+                angka.Equals('6')
+                ||
+                angka.Equals('7')
+                ||
+                angka.Equals('8')
+                ||
+                angka.Equals('9')
+                )
+            {
+                return true;
+            }
+            return false;
+        }
+
         private void tambahOperasi(String operasi)
         {
-            txtOperasi.Text += txtAngka.Text + operasi;
-            txtAngka.Text = "0";
+            if (txtOperasi.TextLength < 1 || !txtOperasi.Text[txtOperasi.TextLength-1].Equals(')'))
+            {
+                txtOperasi.Text += txtAngka.Text + operasi;
+                txtAngka.Text = "0";
+                return;
+            }
+            txtOperasi.Text += operasi;
+        }
+
+        private void cekTier2()
+        {
+            for (int i = 0; i < txtOperasi.TextLength;)
+            {
+                Int64 temp = 0;
+                if (cekAngka(txtOperasi.Text[i]))
+                {
+                    i++;
+                }
+
+                if (i < txtOperasi.TextLength)
+                {
+                    if (txtOperasi.Text[i].Equals('/'))
+                    {
+                        temp = Convert.ToInt64(txtOperasi.Text[i - 1].ToString());
+                        temp /= Convert.ToInt64(txtOperasi.Text[i + 1].ToString());
+
+                        String tempStr = txtOperasi.Text.Substring(0, i - 1);
+                        tempStr += temp.ToString();
+                        txtOperasi.Text = tempStr + txtOperasi.Text.Substring(i + 2);
+                    }
+                    else if (txtOperasi.Text[i].Equals('x'))
+                    {
+                        temp = Convert.ToInt64(txtOperasi.Text[i - 1].ToString());
+                        temp *= Convert.ToInt64(txtOperasi.Text[i + 1].ToString());
+
+                        String tempStr = txtOperasi.Text.Substring(0, i - 1);
+                        tempStr += temp.ToString();
+                        txtOperasi.Text = tempStr + txtOperasi.Text.Substring(i + 2);
+                    }
+                    else
+                    {
+                        i++;
+                    }
+                }
+            }
+        }
+
+        private void cekTier3()
+        {
+            
         }
 
         private void btn0_Click(object sender, EventArgs e)
@@ -155,7 +232,7 @@ namespace Kalkulator_Sederhana
 
         private void btnKali_Click(object sender, EventArgs e)
         {
-            tambahOperasi("X");
+            tambahOperasi("x");
         }
 
         private void btnBagi_Click(object sender, EventArgs e)
@@ -192,10 +269,78 @@ namespace Kalkulator_Sederhana
             {
                 if (item.Equals('(') && jumlah_kurungBuka > 0)
                 {
-                    tambahOperasi(")");
+                    if (!cekAngka(txtOperasi.Text[txtOperasi.TextLength-1]))
+                    {
+                        if (txtOperasi.Text[txtOperasi.TextLength - 1].Equals(')'))
+                        {
+                            txtOperasi.Text += ")";
+                        }
+                        else
+                        {
+                            tambahOperasi(")");
+                        }
+                    }
                     jumlah_kurungBuka--;
                     return;
                 }
+            }
+        }
+
+        private void btnSamaDengan_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                String tempStr = txtOperasi.Text + "=";
+
+                if (txtOperasi.TextLength > 0)
+                {
+                    if (!cekAngka(txtOperasi.Text[txtOperasi.TextLength - 1]))
+                    {
+                        txtOperasi.Text += txtAngka.Text;
+                    }
+                    if (jumlah_kurungBuka > 0)
+                    {
+                        for (int i = 0; i < jumlah_kurungBuka; i++)
+                        {
+                            txtOperasi.Text += ")";
+                        }
+                    }
+
+                    cekTier2();
+
+                    Int64 hasil = 0;
+                    String tempHasil = "";
+                    Boolean angkaPertama = false;
+
+                    for (int i = 0; i < txtOperasi.TextLength; i++)
+                    {
+                        if (!cekAngka(txtOperasi.Text[i]))
+                        {
+                            angkaPertama = true;
+                            i++;
+                            if (txtOperasi.Text[i - 1].Equals('+'))
+                            {
+                                hasil += Convert.ToInt64(txtOperasi.Text[i] + "");
+                            }
+                            else
+                            {
+                                hasil -= Convert.ToInt64(txtOperasi.Text[i] + "");
+                            }
+                        }
+                        if (!angkaPertama)
+                        {
+                            tempHasil += txtOperasi.Text[i];
+                            hasil = Convert.ToInt64(tempHasil + "");
+                        }
+                    }
+
+                    MessageBox.Show(hasil + "");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                throw;
             }
         }
     }

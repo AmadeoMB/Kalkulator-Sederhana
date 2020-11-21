@@ -280,6 +280,7 @@
             this.btnSamaDengan.TabIndex = 20;
             this.btnSamaDengan.Text = "=";
             this.btnSamaDengan.UseVisualStyleBackColor = true;
+            this.btnSamaDengan.Click += new System.EventHandler(this.btnSamaDengan_Click);
             // 
             // btnHapus
             // 
