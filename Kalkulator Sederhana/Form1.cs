@@ -69,40 +69,136 @@ namespace Kalkulator_Sederhana
             txtOperasi.Text += operasi;
         }
 
-        private void cekTier2()
+        private void cekTier1(String operasi = "")
         {
-            for (int i = 0; i < txtOperasi.TextLength;)
+            if (operasi == "")
             {
-                Int64 temp = 0;
-                if (cekAngka(txtOperasi.Text[i]))
+                operasi = txtOperasi.Text;
+            }
+            Int64 angkaPertama = 0;
+            String tempAngkaPertama = "";
+            Int64 angkaKedua = 0;
+            String tempAngkaKedua = "";
+
+            for (int i = 0; i < operasi.Length; i++)
+            {
+                if (!cekAngka(operasi[i]))
                 {
+                    String tempOperasi = operasi[i].ToString();
                     i++;
-                }
-
-                if (i < txtOperasi.TextLength)
-                {
-                    if (txtOperasi.Text[i].Equals('/'))
+                    while (i < operasi.Length && cekAngka(operasi[i]))
                     {
-                        temp = Convert.ToInt64(txtOperasi.Text[i - 1].ToString());
-                        temp /= Convert.ToInt64(txtOperasi.Text[i + 1].ToString());
-
-                        String tempStr = txtOperasi.Text.Substring(0, i - 1);
-                        tempStr += temp.ToString();
-                        txtOperasi.Text = tempStr + txtOperasi.Text.Substring(i + 2);
-                    }
-                    else if (txtOperasi.Text[i].Equals('x'))
-                    {
-                        temp = Convert.ToInt64(txtOperasi.Text[i - 1].ToString());
-                        temp *= Convert.ToInt64(txtOperasi.Text[i + 1].ToString());
-
-                        String tempStr = txtOperasi.Text.Substring(0, i - 1);
-                        tempStr += temp.ToString();
-                        txtOperasi.Text = tempStr + txtOperasi.Text.Substring(i + 2);
-                    }
-                    else
-                    {
+                        tempAngkaKedua += operasi[i];
                         i++;
                     }
+                    angkaPertama = Convert.ToInt64(tempAngkaPertama);
+                    angkaKedua = Convert.ToInt64(tempAngkaKedua);
+                    Int64 hasil = 0;
+
+                    if (tempOperasi.Equals("+"))
+                    {
+                        hasil = angkaPertama + angkaKedua;
+
+                        if (i < operasi.Length)
+                        {
+                            operasi = hasil + operasi.Substring(i);
+                            i = -1;
+                            tempAngkaPertama = "";
+                            tempAngkaKedua = "";
+                        }
+                        else
+                        {
+                            txtAngka.Text = hasil + "";
+                        }
+                    }
+                    else if (tempOperasi.Equals("-"))
+                    {
+                        hasil = angkaPertama - angkaKedua;
+
+                        if (i < operasi.Length)
+                        {
+                            operasi = hasil + operasi.Substring(i);
+                            i = -1;
+                            tempAngkaPertama = "";
+                            tempAngkaKedua = "";
+                        }
+                        else
+                        {
+                            txtAngka.Text = hasil + "";
+                        }
+                    }
+                }
+                else
+                {
+                    tempAngkaPertama += operasi[i];
+                }
+            }
+        }
+
+        private void cekTier2(String operasi = "")
+        {
+            if (operasi == "")
+            {
+                operasi = txtOperasi.Text;
+            }
+            Int64 angkaPertama = 0;
+            String tempAngkaPertama = "";
+            Int64 angkaKedua = 0;
+            String tempAngkaKedua = "";
+
+            for (int i = 0; i < operasi.Length; i++)
+            {
+                if (!cekAngka(operasi[i]))
+                {
+                    String tempOperasi = operasi[i].ToString();
+                    i++;
+                    while (i < operasi.Length && cekAngka(operasi[i]))
+                    {
+                        tempAngkaKedua += operasi[i];
+                        i++;
+                    }
+                    angkaPertama = Convert.ToInt64(tempAngkaPertama);
+                    angkaKedua = Convert.ToInt64(tempAngkaKedua);
+                    Int64 hasil = 0;
+
+                    if (tempOperasi.Equals("x"))
+                    {
+                        hasil = angkaPertama * angkaKedua;
+
+                        if (i < operasi.Length)
+                        {
+                            operasi = hasil + operasi.Substring(i);
+                            i = -1;
+                            tempAngkaPertama = "";
+                            tempAngkaKedua = "";
+                        }
+                        else
+                        {
+                            txtAngka.Text = hasil + "";
+                            return;
+                        }
+                    }
+                    else if (tempOperasi.Equals("/"))
+                    {
+                        hasil = angkaPertama / angkaKedua;
+
+                        if (i < operasi.Length)
+                        {
+                            operasi = hasil + operasi.Substring(i);
+                            i = -1;
+                            tempAngkaPertama = "";
+                            tempAngkaKedua = "";
+                        }
+                        else
+                        {
+                            txtAngka.Text = hasil + "";
+                            return;
+                        }
+                    }
+                }
+                else
+                {
+                    tempAngkaPertama += operasi[i];
                 }
             }
         }
@@ -290,7 +386,7 @@ namespace Kalkulator_Sederhana
         {
             try
             {
-                String tempStr = txtOperasi.Text + "=";
+                String tempStr = txtOperasi.Text + txtAngka.Text + "=";
 
                 if (txtOperasi.TextLength > 0)
                 {
@@ -307,34 +403,10 @@ namespace Kalkulator_Sederhana
                     }
 
                     cekTier2();
+                    cekTier1();
 
-                    Int64 hasil = 0;
-                    String tempHasil = "";
-                    Boolean angkaPertama = false;
 
-                    for (int i = 0; i < txtOperasi.TextLength; i++)
-                    {
-                        if (!cekAngka(txtOperasi.Text[i]))
-                        {
-                            angkaPertama = true;
-                            i++;
-                            if (txtOperasi.Text[i - 1].Equals('+'))
-                            {
-                                hasil += Convert.ToInt64(txtOperasi.Text[i] + "");
-                            }
-                            else
-                            {
-                                hasil -= Convert.ToInt64(txtOperasi.Text[i] + "");
-                            }
-                        }
-                        if (!angkaPertama)
-                        {
-                            tempHasil += txtOperasi.Text[i];
-                            hasil = Convert.ToInt64(tempHasil + "");
-                        }
-                    }
-
-                    MessageBox.Show(hasil + "");
+                    txtOperasi.Text = tempStr;
                 }
             }
             catch (Exception ex)
