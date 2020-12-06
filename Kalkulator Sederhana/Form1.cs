@@ -69,145 +69,6 @@ namespace Kalkulator_Sederhana
             txtOperasi.Text += operasi;
         }
 
-        private void cekTier1(String operasi = "")
-        {
-            if (operasi == "")
-            {
-                operasi = txtOperasi.Text;
-            }
-            Int64 angkaPertama = 0;
-            String tempAngkaPertama = "";
-            Int64 angkaKedua = 0;
-            String tempAngkaKedua = "";
-
-            for (int i = 0; i < operasi.Length; i++)
-            {
-                if (!cekAngka(operasi[i]))
-                {
-                    String tempOperasi = operasi[i].ToString();
-                    i++;
-                    while (i < operasi.Length && cekAngka(operasi[i]))
-                    {
-                        tempAngkaKedua += operasi[i];
-                        i++;
-                    }
-                    angkaPertama = Convert.ToInt64(tempAngkaPertama);
-                    angkaKedua = Convert.ToInt64(tempAngkaKedua);
-                    Int64 hasil = 0;
-
-                    if (tempOperasi.Equals("+"))
-                    {
-                        hasil = angkaPertama + angkaKedua;
-
-                        if (i < operasi.Length)
-                        {
-                            operasi = hasil + operasi.Substring(i);
-                            i = -1;
-                            tempAngkaPertama = "";
-                            tempAngkaKedua = "";
-                        }
-                        else
-                        {
-                            txtAngka.Text = hasil + "";
-                        }
-                    }
-                    else if (tempOperasi.Equals("-"))
-                    {
-                        hasil = angkaPertama - angkaKedua;
-
-                        if (i < operasi.Length)
-                        {
-                            operasi = hasil + operasi.Substring(i);
-                            i = -1;
-                            tempAngkaPertama = "";
-                            tempAngkaKedua = "";
-                        }
-                        else
-                        {
-                            txtAngka.Text = hasil + "";
-                        }
-                    }
-                }
-                else
-                {
-                    tempAngkaPertama += operasi[i];
-                }
-            }
-        }
-
-        private void cekTier2(String operasi = "")
-        {
-            if (operasi == "")
-            {
-                operasi = txtOperasi.Text;
-            }
-            Int64 angkaPertama = 0;
-            String tempAngkaPertama = "";
-            Int64 angkaKedua = 0;
-            String tempAngkaKedua = "";
-
-            for (int i = 0; i < operasi.Length; i++)
-            {
-                if (!cekAngka(operasi[i]))
-                {
-                    String tempOperasi = operasi[i].ToString();
-                    i++;
-                    while (i < operasi.Length && cekAngka(operasi[i]))
-                    {
-                        tempAngkaKedua += operasi[i];
-                        i++;
-                    }
-                    angkaPertama = Convert.ToInt64(tempAngkaPertama);
-                    angkaKedua = Convert.ToInt64(tempAngkaKedua);
-                    Int64 hasil = 0;
-
-                    if (tempOperasi.Equals("x"))
-                    {
-                        hasil = angkaPertama * angkaKedua;
-
-                        if (i < operasi.Length)
-                        {
-                            operasi = hasil + operasi.Substring(i);
-                            i = -1;
-                            tempAngkaPertama = "";
-                            tempAngkaKedua = "";
-                        }
-                        else
-                        {
-                            txtAngka.Text = hasil + "";
-                            return;
-                        }
-                    }
-                    else if (tempOperasi.Equals("/"))
-                    {
-                        hasil = angkaPertama / angkaKedua;
-
-                        if (i < operasi.Length)
-                        {
-                            operasi = hasil + operasi.Substring(i);
-                            i = -1;
-                            tempAngkaPertama = "";
-                            tempAngkaKedua = "";
-                        }
-                        else
-                        {
-                            txtAngka.Text = hasil + "";
-                            return;
-                        }
-                    }
-                }
-                else
-                {
-                    tempAngkaPertama += operasi[i];
-                }
-            }
-        }
-
-        private void cekTier3()
-        {
-            
-        }
-
         private void btn0_Click(object sender, EventArgs e)
         {
             if (!txtAngka.Text.Equals("0"))
@@ -380,6 +241,206 @@ namespace Kalkulator_Sederhana
                     return;
                 }
             }
+        }
+
+        private void cekTier1(String operasi = "")
+        {
+            int idx1 = -1;
+            int idx2 = -1;
+
+            if (operasi == "")
+            {
+                operasi = txtOperasi.Text;
+            }
+
+            for (int i = 0; i < operasi.Length; i++)
+            {
+                Int64 angkaPertama = 0;
+                String tempAngkaPertama = "";
+                Int64 angkaKedua = 0;
+                String tempAngkaKedua = "";
+                if (!cekAngka(operasi[i]))
+                {
+                    String tempOperasi = operasi[i].ToString();
+                    Int64 hasil = 0;
+                    if (tempOperasi.Equals("+"))
+                    {
+                        for (int j = i - 1; j > -1; j--)
+                        {
+                            if (!cekAngka(operasi[j]))
+                            {
+                                break;
+                            }
+                            idx1 = j;
+                            tempAngkaPertama += operasi[j];
+                        }
+                        String temp = "";
+                        for (int j = tempAngkaPertama.Length - 1; j > -1; j--)
+                        {
+                            temp += tempAngkaPertama[j];
+                        }
+                        tempAngkaPertama = temp;
+
+                        for (int j = i + 1; j < operasi.Length; j++)
+                        {
+                            if (!cekAngka(operasi[j]))
+                            {
+                                break;
+                            }
+                            idx2 = j + 1;
+                            tempAngkaKedua += operasi[j];
+                        }
+                        angkaPertama = Convert.ToInt64(tempAngkaPertama);
+                        angkaKedua = Convert.ToInt64(tempAngkaKedua);
+                        hasil = angkaPertama + angkaKedua;
+
+                        operasi = operasi.Substring(0, idx1) + hasil + operasi.Substring(idx2);
+                        txtAngka.Text = hasil + "";
+                        txtOperasi.Text = operasi;
+                        i = 0;
+                    }
+                    else if (tempOperasi.Equals("-"))
+                    {
+                        for (int j = i - 1; j > -1; j--)
+                        {
+                            if (!cekAngka(operasi[j]))
+                            {
+                                break;
+                            }
+                            idx1 = j;
+                            tempAngkaPertama += operasi[j];
+                        }
+                        String temp = "";
+                        for (int j = tempAngkaPertama.Length - 1; j > -1; j--)
+                        {
+                            temp += tempAngkaPertama[j];
+                        }
+                        tempAngkaPertama = temp;
+
+                        for (int j = i + 1; j < operasi.Length; j++)
+                        {
+                            if (!cekAngka(operasi[j]))
+                            {
+                                break;
+                            }
+                            idx2 = j + 1;
+                            tempAngkaKedua += operasi[j];
+                        }
+
+                        angkaPertama = Convert.ToInt64(tempAngkaPertama);
+                        angkaKedua = Convert.ToInt64(tempAngkaKedua);
+                        hasil = angkaPertama - angkaKedua;
+
+                        operasi = operasi.Substring(0, idx1) + hasil + operasi.Substring(idx2);
+                        txtAngka.Text = hasil + "";
+                        txtOperasi.Text = operasi;
+                        i = 0;
+                    }
+                }
+            }
+        }
+
+        private void cekTier2(String operasi = "")
+        {
+            int idx1 = -1;
+            int idx2 = -1;
+
+            if (operasi == "")
+            {
+                operasi = txtOperasi.Text;
+            }
+
+            for (int i = 0; i < operasi.Length; i++)
+            {
+                Int64 angkaPertama = 0;
+                String tempAngkaPertama = "";
+                Int64 angkaKedua = 0;
+                String tempAngkaKedua = "";
+                if (!cekAngka(operasi[i]))
+                {
+                    String tempOperasi = operasi[i].ToString();
+                    Int64 hasil = 0;
+                    if (tempOperasi.Equals("x"))
+                    {
+                        for (int j = i - 1; j > -1; j--)
+                        {
+                            if (!cekAngka(operasi[j]))
+                            {
+                                break;
+                            }
+                            idx1 = j;
+                            tempAngkaPertama += operasi[j];
+                        }
+                        String temp = "";
+                        for (int j = tempAngkaPertama.Length - 1; j > -1; j--)
+                        {
+                            temp += tempAngkaPertama[j];
+                        }
+                        tempAngkaPertama = temp;
+
+                        for (int j = i + 1; j < operasi.Length; j++)
+                        {
+                            if (!cekAngka(operasi[j]))
+                            {
+                                break;
+                            }
+                            idx2 = j + 1;
+                            tempAngkaKedua += operasi[j];
+                        }
+
+                        angkaPertama = Convert.ToInt64(tempAngkaPertama);
+                        angkaKedua = Convert.ToInt64(tempAngkaKedua);
+                        hasil = angkaPertama * angkaKedua;
+
+                        operasi = operasi.Substring(0, idx1) + hasil + operasi.Substring(idx2);
+                        txtAngka.Text = hasil + "";
+                        txtOperasi.Text = operasi;
+                        i = 0;
+                    }
+                    else if (tempOperasi.Equals("/"))
+                    {
+                        for (int j = i - 1; j > -1; j--)
+                        {
+                            if (!cekAngka(operasi[j]))
+                            {
+                                break;
+                            }
+                            idx1 = j;
+                            tempAngkaPertama += operasi[j];
+                        }
+                        String temp = "";
+                        for (int j = tempAngkaPertama.Length - 1; j > -1; j--)
+                        {
+                            temp += tempAngkaPertama[j];
+                        }
+                        tempAngkaPertama = temp;
+
+                        for (int j = i + 1; j < operasi.Length; j++)
+                        {
+                            if (!cekAngka(operasi[j]))
+                            {
+                                break;
+                            }
+                            idx2 = j + 1;
+                            tempAngkaKedua += operasi[j];
+                        }
+
+                        angkaPertama = Convert.ToInt64(tempAngkaPertama);
+                        angkaKedua = Convert.ToInt64(tempAngkaKedua);
+                        hasil = angkaPertama / angkaKedua;
+
+                        operasi = operasi.Substring(0, idx1) + hasil + operasi.Substring(idx2);
+                        txtAngka.Text = hasil + "";
+                        txtOperasi.Text = operasi;
+                        i = 0;
+                    }
+                }
+            }
+        }
+
+        private void cekTier3()
+        {
+
         }
 
         private void btnSamaDengan_Click(object sender, EventArgs e)
